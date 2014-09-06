@@ -3,13 +3,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <time.h>
 
 #include "main.h"
 
 int loc = 0;
+int ogre = 0;
+int sword = 0;
 
 typedef struct location_t {
 	char *name;
+	char *desc;
 	int north;
 	int south;
 	int east;
@@ -19,6 +23,7 @@ typedef struct location_t {
 location_t map[] = {
 	{
 		.name = "forest",
+		.desc = "There are leaves.",
 		.north = -1,
 		.south = 2,
 		.east = 1,
@@ -26,6 +31,7 @@ location_t map[] = {
 	},
 	{
 		.name = "beach",
+		.desc = "There are no leaves.",
 		.north = -1,
 		.south = 3,
 		.east = -1,
@@ -33,6 +39,7 @@ location_t map[] = {
 	},
 	{
 		.name = "cave",
+		.desc = "It is very dark.",
 		.north = 0,
 		.south = -1,
 		.east = 3,
@@ -40,12 +47,15 @@ location_t map[] = {
 	},
 	{
 		.name = "pond ",
+		.desc = "Your socks are now wet",
 		.north = 1,
 		.south = -1,
 		.east = -1,
 		.west = 2
 	}
 };
+
+const int LOC_MAX=4;
 
 char * accept_input()
 {
@@ -56,14 +66,50 @@ char * accept_input()
 	return s;
 }
 
+void available_exits()
+{
+	int exits = 0;
+	printf("available exits are: ");
+
+	if (map[loc].north != -1) {
+		printf("north"); exits++;
+	}
+	if (map[loc].south != -1) {
+		if (exits > 0) printf(",");
+		printf("south"); exits++;
+	}
+	if (map[loc].east != -1) {
+		if (exits > 0) printf(",");
+		printf("east"); exits++;
+	}
+	if (map[loc].west != -1) {
+		if (exits > 0) printf(",");
+		printf("west"); exits++;
+	}
+
+	if (exits == 0) {
+		printf("none");
+	}
+	printf(".\n");
+}
+
 int handle_input(char *input)
 {
-	printf("You said '%s'\n", input);
+//	printf("You said '%s'\n", input);
 	if (strcasecmp(input, "hello") == 0) {
 		printf("Hello yourself\n");
 	}
+	else if (strcmp(input, "north") == 0) {
+		go_north();
+	}
+	else if (strcmp(input, "south") == 0) {
+		go_south();
+	}
 	else if (strcmp(input, "east") == 0) {
 		go_east();
+	}
+	else if (strcmp(input, "west") == 0) {
+		go_west();
 	}
 	else if (strcmp(input, "quit") == 0) {
 		printf("Goodbye\n");
@@ -77,10 +123,32 @@ int handle_input(char *input)
 
 void inform_user()
 {
-	printf("You are in location %i\n", loc);
+	//printf("You are in location %i\n", loc);
 	printf("You are in a %s\n", map[loc].name);
+	printf("%s\n", map[loc].desc);
+	available_exits();
 }
 
+void go_north()
+{
+	if (map[loc].north == -1) {
+		printf("This place does not exist\n");
+	}
+	else {
+		printf("You have gone north\n");
+		loc = map[loc].north;
+	}
+}
+void go_south()
+{
+	if (map[loc].south == -1) {
+		printf("This place does not exist\n");
+	}
+	else {
+		printf("You have gone south\n");
+		loc = map[loc].south;
+	}
+}
 void go_east()
 {
 	if (map[loc].east == -1) {
@@ -91,12 +159,23 @@ void go_east()
 		loc = map[loc].east;
 	}
 }
+void go_west()
+{
+	if (map[loc].west == -1) {
+		printf("This place does not exist\n");
+	}
+	else {
+		printf("You have gone west\n");
+		loc = map[loc].west;
+	}
+}
 
 int main()
 {
 	char *input;
 	int i = 0;
 	welcome_user();
+	initialize_locs();
 	while (i == 0) {
 		inform_user();
 		input = accept_input();
@@ -106,9 +185,15 @@ int main()
 	return 0;
 }
 
+void initialize_locs() 
+{
+	srand(time(NULL));
+	ogre = rand()%LOC_MAX;
+	sword = rand()%LOC_MAX;
+	loc = rand()%LOC_MAX;
+}
+
 void welcome_user()
 {
 	printf("Welcome, User!\n");
 }
-
-
