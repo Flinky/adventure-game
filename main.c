@@ -11,6 +11,9 @@ int loc = 0;
 int ogre = 0;
 int sword = 0;
 
+const int LOC_INVALID = -1;
+const int LOC_INVENTORY = -2;
+
 typedef struct location_t {
 	char *name;
 	char *desc;
@@ -127,6 +130,7 @@ void inform_user()
 	printf("You are in a %s\n", map[loc].name);
 	printf("%s\n", map[loc].desc);
 	available_exits();
+	object_locs();
 }
 
 void go_north()
@@ -181,8 +185,32 @@ int main()
 		input = accept_input();
 		i = handle_input(input);
 		free(input);
+		move_ogre();
 	}
 	return 0;
+}
+
+void move_ogre()
+{
+	int dir = rand()%4;
+	int moved = 0;
+	if (dir == 0 && map[ogre].north != LOC_INVALID) {
+		ogre = map[ogre].north;
+		moved = 1;
+	}
+	if (dir == 1 && map[ogre].south != LOC_INVALID) {
+		ogre = map[ogre].south;	
+		moved = 1;
+	}
+	if (dir == 2 && map[ogre].east != LOC_INVALID) {
+		ogre = map[ogre].east;	
+		moved = 1;
+	}
+	if (dir == 3 && map[ogre].west != LOC_INVALID) {
+		ogre = map[ogre].west;	
+		moved = 1;
+	}
+	if (moved && loc == ogre) printf("The ogre arrives!\n");
 }
 
 void initialize_locs() 
@@ -191,6 +219,16 @@ void initialize_locs()
 	ogre = rand()%LOC_MAX;
 	sword = rand()%LOC_MAX;
 	loc = rand()%LOC_MAX;
+}
+
+void object_locs()
+{
+	if (loc == ogre) {
+		printf("You see an ogre!!\n");
+	}
+	if (loc == sword) {
+		printf("There is a shimmering sword ahead!\n");
+	}
 }
 
 void welcome_user()
