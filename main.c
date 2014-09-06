@@ -64,7 +64,7 @@ char * accept_input()
 {
 	char *s = malloc(256);
 	printf("Type your string here > ");
-	fgets(s, sizeof(s), stdin);
+	fgets(s, 256, stdin);
 	s[strlen(s) - 1] = '\0'; /* chop newline */
 	return s;
 }
@@ -96,9 +96,15 @@ void available_exits()
 	printf(".\n");
 }
 
+void celebrate()
+{
+	printf("The ogre sees your sword. You are now best friends! The ENDS\n");
+	exit(EXIT_SUCCESS);
+}
+
 int handle_input(char *input)
 {
-//	printf("You said '%s'\n", input);
+	//printf("You said '%s'\n", input);
 	if (strcasecmp(input, "hello") == 0) {
 		printf("Hello yourself\n");
 	}
@@ -113,6 +119,9 @@ int handle_input(char *input)
 	}
 	else if (strcmp(input, "west") == 0) {
 		go_west();
+	}
+	else if (strcmp(input, "get sword") == 0) {
+		get_sword();
 	}
 	else if (strcmp(input, "quit") == 0) {
 		printf("Goodbye\n");
@@ -228,6 +237,20 @@ void object_locs()
 	}
 	if (loc == sword) {
 		printf("There is a shimmering sword ahead!\n");
+	}
+	if (loc == ogre && sword == LOC_INVENTORY) {
+		celebrate();
+	}
+}
+
+void get_sword()
+{
+	if (loc == sword) {
+		sword = LOC_INVENTORY;
+		printf("You now have the sword\n");
+	}
+	else {
+		printf("The sword is not here\n");
 	}
 }
 

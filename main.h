@@ -1,4 +1,5 @@
 char * accept_input();
+void get_sword();
 void go_north(); 
 void go_south(); 
 void go_east(); 
